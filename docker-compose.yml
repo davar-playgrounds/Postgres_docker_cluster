@@ -1,0 +1,39 @@
+version: "3"
+services:
+  pg_master_1:
+     build: ./master
+     ports:
+         - "15432:5432"
+     volumes:
+         - mdata:/var/lib/postgresql/data
+     environment:
+         - POSTGRES_USER=optima
+         - POSTGRES_PASSWORD=123456
+         - POSTGRES_DB=postgres
+         - PG_REP_USER=rep
+         - PG_REP_PASSWORD=123456
+     networks:
+           - test 
+     restart: always
+  replica_db:
+     build: ./slave
+     ports:
+         - "15433:5432"
+     volumes:
+         - sdata:/var/lib/postgresql/data
+     environment:
+         - POSTGRES_USER=optima
+         - POSTGRES_PASSWORD=123456
+         - POSTGRES_DB=postgres
+         - PG_REP_USER=rep
+         - PG_REP_PASSWORD=123456
+     networks:
+            - test
+     restart: always
+volumes:
+  mdata:
+  sdata:
+networks:
+  test:
+    external:
+      name: test
